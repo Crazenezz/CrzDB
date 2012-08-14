@@ -4,6 +4,7 @@
  */
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.crz.db.config.Config;
 import org.crz.db.config.abs.impl.MySQLConfig;
@@ -37,9 +38,14 @@ public class ConnectionTest {
     public void getUser() {
         Config config = new Config(MySQLConfig.getInstance("tryout"));
         SQLQuery query = new SQLQuery(config.getState(), "user");
-        Map<String, Object> data;
+        List<Map> datas;
+        Map<String, Object> data = null;
         
-        data = query.getAll();
+        datas = query.getAll();
+        
+        for(Map map : datas) {
+            data = map;
+        }
         
         assertEquals("crazenezz", data.get("user_name"));
         assertEquals("craze", data.get("first_name"));
@@ -55,9 +61,14 @@ public class ConnectionTest {
     public void getUserByPK() {
         Config config = new Config(MySQLConfig.getInstance("tryout"));
         SQLQuery query = new SQLQuery(config.getState(), "user");
-        Map<String, Object> data;
+        List<Map> datas;
+        Map<String, Object> data = null;
         
-        data = query.getAllByPK("user_name", "crazenezz");
+        datas = query.getAllByPK("user_name", "crazenezz");
+        
+        for(Map map : datas) {
+            data = map;
+        }
         
         assertEquals("crazenezz", data.get("user_name"));
         assertEquals("craze", data.get("first_name"));
@@ -73,9 +84,14 @@ public class ConnectionTest {
     public void getUserByPKs() {
         Config config = new Config(MySQLConfig.getInstance("tryout"));
         SQLQuery query = new SQLQuery(config.getState(), "user");
-        Map<String, Object> data;
+        List<Map> datas;
+        Map<String, Object> data = null;
         
-        data = query.getAllByPKs(new String[]{"user_name", "first_name"}, new Object[]{"crazenezz", "craze"});
+        datas = query.getAllByPKs(new String[]{"user_name", "first_name"}, new Object[]{"crazenezz", "craze"});
+        
+        for(Map map : datas) {
+            data = map;
+        }
         
         assertEquals("crazenezz", data.get("user_name"));
         assertEquals("craze", data.get("first_name"));

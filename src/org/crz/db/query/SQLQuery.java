@@ -22,6 +22,7 @@ import java.util.logging.Logger;
  */
 public class SQLQuery {
     
+    private List<Map> datas;
     private Map<String, Object> data;
     private List<String> columns;
     private StringBuilder builder;
@@ -38,6 +39,7 @@ public class SQLQuery {
      */
     public SQLQuery(Statement state, String table) {
         data = new HashMap<>();
+        datas = new ArrayList<>();
         columns = new ArrayList<>();
         this.state = state;
         this.table = table;
@@ -127,7 +129,7 @@ public class SQLQuery {
      * 
      * @return Collection of data in Map&lt;column, value&gt; object.
      */
-    public Map getAll() {
+    public List<Map> getAll() {
         builder = new StringBuilder("SELECT ")
                 .append(columnBuilder())
                 .append(" FROM ")
@@ -135,7 +137,7 @@ public class SQLQuery {
         
         retrieveData();
         
-        return data;
+        return datas;
     }
     
     /**
@@ -145,7 +147,7 @@ public class SQLQuery {
      * @param val Object of primary key value.
      * @return Collection of data in Map&lt;column, value&gt; object.
      */
-    public Map getAllByPK(String pk, Object val) {
+    public List<Map> getAllByPK(String pk, Object val) {
         return getAllByPKs(new String[] {pk}, new Object[] {val});
     }
     
@@ -156,7 +158,7 @@ public class SQLQuery {
      * @param vals Array of object of primary key values.
      * @return Collection of data in Map&lt;column, value&gt; object.
      */
-    public Map getAllByPKs(String[] pks, Object[] vals) {
+    public List<Map> getAllByPKs(String[] pks, Object[] vals) {
         builder = new StringBuilder("SELECT ")
                 .append(columnBuilder())
                 .append(" FROM ")
@@ -166,7 +168,7 @@ public class SQLQuery {
         
         retrieveData();
         
-        return data;
+        return datas;
     }
     
     /**
@@ -181,6 +183,7 @@ public class SQLQuery {
                 for(String column : columns) {
                     data.put(column, rSet.getObject(column));
                 }
+                datas.add(data);
             }
         } catch (SQLException ex) {
             Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, null, ex);
