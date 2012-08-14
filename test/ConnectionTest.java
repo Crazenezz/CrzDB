@@ -12,6 +12,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
+ * JUnit class to test database connection and CRUD function.
  * 
  * @author crazenezz
  */
@@ -97,6 +98,8 @@ public class ConnectionTest {
         int success = query.insert(data);
         
         assertEquals(1, success);
+        
+        config.closeConnection();
     }
     
     /**
@@ -115,6 +118,8 @@ public class ConnectionTest {
         int success = query.update(data, key);
         
         assertEquals(1, success);
+        
+        config.closeConnection();
     }
     
     /**
@@ -131,5 +136,7 @@ public class ConnectionTest {
         int success = query.delete(key);
         
         assertEquals(1, success);
+        
+        config.closeConnection();
     }
 }
