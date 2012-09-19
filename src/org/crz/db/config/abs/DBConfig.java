@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.crz.db.config.abs;
 
 /**
@@ -14,7 +10,7 @@ public abstract class DBConfig {
     private String type;
     private String address;
     private String port;
-    private String name;
+    private String db;
     private String username;
     private String password;
     private String url;
@@ -24,7 +20,7 @@ public abstract class DBConfig {
      * 
      * @param url 
      */
-    public void setUrl(String url) {
+    protected void setUrl(String url) {
         this.url = url;
     }
 
@@ -60,17 +56,17 @@ public abstract class DBConfig {
      * 
      * @return String of database name.
      */
-    public String getName() {
-        return name;
+    public String getDB() {
+        return db;
     }
 
     /**
      * Set database name.
      * 
-     * @param name 
+     * @param db 
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setDB(String db) {
+        this.db = db;
     }
 
     /**
@@ -148,9 +144,10 @@ public abstract class DBConfig {
     /**
      * DBConfig constructor.
      * 
-     * @param name String of database name.
+     * @param db String of database name.
      */
-    public DBConfig(String name) {
-        this.name = name;
+    public DBConfig(String db) {
+        this.db = db;
     }
+    
 }

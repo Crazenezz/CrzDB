@@ -23,7 +23,7 @@ public class PostgreSQLConfig extends DBConfig {
                 .append(getType()).append("://")
                 .append(getAddress()).append(":")
                 .append(getPort()).append("/")
-                .append(getName());
+                .append(getDB());
         setUrl(builder.toString());
     }
     
@@ -37,13 +37,40 @@ public class PostgreSQLConfig extends DBConfig {
         setType("postgresql");
         setAddress("localhost");
         setPort("5432");
-        setUsername("root");
-        setPassword("root");
+        setUsername("postgres");
+        setPassword("postgres");
         setUrl();
+    }
+    
+    public void setPostgreSQLConfig(String address, String port) {
+        setPostgreSQLConfig(null, address, port, null, null);
+    }
+    
+    public void setPostgreSQLConfig(String address, String port, String username, String password) {
+        setPostgreSQLConfig(null, address, port, username, password);
+    }
+    
+    public void setPostgreSQLConfig(String db, String address, String port) {
+        setPostgreSQLConfig(db, address, port, null, null);
+    }
+    
+    public void setPostgreSQLConfig(String db, String address, String port, String username, String password) {
+        if(db != null)
+            setDB(db);
+        
+        setAddress(address);
+        setPort(port);
+        
+        if(username != null)
+            setUsername(username);
+        
+        if(password != null)
+            setPassword(password);
     }
     
     /**
      * Calling instance of MySQLConfig.
+     *  For default username = "postgres", password = "postgres"
      * 
      * @param name String of database name.
      * @return Instance of MySQLConfig.

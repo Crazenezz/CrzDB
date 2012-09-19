@@ -23,17 +23,17 @@ public class MySQLConfig extends DBConfig {
                 .append(getType()).append("://")
                 .append(getAddress()).append(":")
                 .append(getPort()).append("/")
-                .append(getName());
+                .append(getDB());
         setUrl(builder.toString());
     }
     
     /**
      * Singleton constructor of MySQLConfig.
      * 
-     * @param name String of database name.
+     * @param db String of database name.
      */
-    private MySQLConfig(String name) {
-        super(name);
+    private MySQLConfig(String db) {
+        super(db);
         setType("mysql");
         setAddress("localhost");
         setPort("3306");
@@ -42,16 +42,44 @@ public class MySQLConfig extends DBConfig {
         setUrl();
     }
     
+    public void setMySQLConfig(String address, String port) {
+        setMySQLConfig(null, address, port, null, null);
+    }
+    
+    public void setMySQLConfig(String address, String port, String username, String password) {
+        setMySQLConfig(null, address, port, username, password);
+    }
+    
+    public void setMySQLConfig(String db, String address, String port) {
+        setMySQLConfig(db, address, port, null, null);
+    }
+    
+    public void setMySQLConfig(String db, String address, String port, String username, String password) {
+        if(db != null)
+            setDB(db);
+        
+        setAddress(address);
+        setPort(port);
+        
+        if(username != null)
+            setUsername(username);
+        
+        if(password != null)
+            setPassword(password);
+    }
+    
     /**
      * Calling instance of MySQLConfig.
+     *  For default username = "root", password = "root"
      * 
-     * @param name String of database name.
+     * @param db String of database name.
      * @return Instance of MySQLConfig.
      */
-    public static MySQLConfig getInstance(String name) {
+    public static MySQLConfig getInstance(String db) {
         if(con == null)
-            con = new MySQLConfig(name);
+            con = new MySQLConfig(db);
         
         return con;
     }
+    
 }

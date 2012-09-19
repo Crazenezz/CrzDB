@@ -23,7 +23,7 @@ public class OracleConfig extends DBConfig {
                 .append(getType()).append("://@")
                 .append(getAddress()).append(":")
                 .append(getPort()).append("/")
-                .append(getName());
+                .append(getDB());
         setUrl(builder.toString());
     }
     
@@ -40,6 +40,32 @@ public class OracleConfig extends DBConfig {
         setUsername("root");
         setPassword("root");
         setUrl();
+    }
+    
+    public void setOracleConfig(String address, String port) {
+        setOracleConfig(null, address, port, null, null);
+    }
+    
+    public void setOracleConfig(String address, String port, String username, String password) {
+        setOracleConfig(null, address, port, username, password);
+    }
+    
+    public void setOracleConfig(String db, String address, String port) {
+        setOracleConfig(db, address, port, null, null);
+    }
+    
+    public void setOracleConfig(String db, String address, String port, String username, String password) {
+        if(db != null)
+            setDB(db);
+        
+        setAddress(address);
+        setPort(port);
+        
+        if(username != null)
+            setUsername(username);
+        
+        if(password != null)
+            setPassword(password);
     }
     
     /**

@@ -4,9 +4,9 @@
  */
 package org.crz.db.query;
 
-import com.mysql.jdbc.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,12 +24,17 @@ public class SQLQuery {
     
     private List<Map> datas;
     private Map<String, Object> data;
+    private Object[][] dataArr;
     private List<String> columns;
     private StringBuilder builder;
     private Statement state;
     private ResultSet rSet;
     private int columnCount;
     private String table;
+
+    public List<String> getColumns() {
+        return columns;
+    }
     
     /**
      * SQLQuery constructor.
@@ -130,35 +135,89 @@ public class SQLQuery {
      * @return Collection of data in Map&lt;column, value&gt; object.
      */
     public List<Map> getAll() {
+        return getAll(null, null);
+    }
+    
+    /**
+     * Get all data from specific table name with specific limit and offset.
+     * 
+     * @param limit Maximum record to query.
+     * @param offset First record to begin.
+     * @return Collection of data in Map&lt;column, value&gt; object.
+     */
+    public List<Map> getAll(Integer limit, Integer offset) {
         builder = new StringBuilder("SELECT ")
                 .append(columnBuilder())
                 .append(" FROM ")
                 .append(table);
         
+        if(limit != null || offset != null)
+            setLimit(limit, offset);
         retrieveData();
         
         return datas;
     }
     
     /**
-     * Get all data from specific table name and primary key.
+     * Set limit and offset for the query.
      * 
-     * @param pk String of primary key column.
-     * @param val Object of primary key value.
-     * @return Collection of data in Map&lt;column, value&gt; object.
+     * @param limit Maximum record to query.
+     * @param offset First record to begin.
      */
-    public List<Map> getAllByPK(String pk, Object val) {
-        return getAllByPKs(new String[] {pk}, new Object[] {val});
+    private void setLimit(int limit, int offset) {
+        builder.append(" LIMIT ")
+                .append(limit)
+                .append(" OFFSET ")
+                .append(offset);
     }
     
     /**
-     * Get all data from specific table name and primary keys.
+     * Get all data from specific table name, condition, limit and offset.
+     * 
+     * @param pk String of primary key column.
+     * @param val Object of primary key value.
+     * @param limit Maximum record to query.
+     * @param offset First record to begin.
+     * @return Collection of data in Map&lt;column, value&gt; object.
+     */
+    public List<Map> getAllByCustom(String pk, Object val) {
+        return getAllByCustom(pk, val, null, null);
+    }
+    
+    /**
+     * Get all data from specific table name and condition.
+     * 
+     * @param pk String of primary key column.
+     * @param val Object of primary key value.
+     * @param limit Maximum record to query.
+     * @param offset First record to begin.
+     * @return Collection of data in Map&lt;column, value&gt; object.
+     */
+    public List<Map> getAllByCustom(String pk, Object val, Integer limit, Integer offset) {
+        return getAllByCustom(new String[] {pk}, new Object[] {val}, limit, offset);
+    }
+    
+    /**
+     * Get all data from specific table name and conditions.
      * 
      * @param pks Array of string of primary key columns.
      * @param vals Array of object of primary key values.
      * @return Collection of data in Map&lt;column, value&gt; object.
      */
-    public List<Map> getAllByPKs(String[] pks, Object[] vals) {
+    public List<Map> getAllByCustom(String[] pks, Object[] vals) {
+        return getAllByCustom(pks, vals, null, null);
+    }
+    
+    /**
+     * Get all data from specific table name, conditions, limit and offset.
+     * 
+     * @param pks Array of string of primary key columns.
+     * @param vals Array of object of primary key values.
+     * @param limit Maximum record to query.
+     * @param offset First record to begin.
+     * @return Collection of data in Map&lt;column, value&gt; object.
+     */
+    public List<Map> getAllByCustom(String[] pks, Object[] vals, Integer limit, Integer offset) {
         builder = new StringBuilder("SELECT ")
                 .append(columnBuilder())
                 .append(" FROM ")
@@ -166,9 +225,26 @@ public class SQLQuery {
                 .append(" WHERE ")
                 .append(pkBuilder(pks, vals));
         
+        if(limit != null || offset != null)
+            setLimit(limit, offset);
+        
         retrieveData();
         
         return datas;
+    }
+    
+    public Object[][] getAllToArray(Integer limit, Integer offset) {
+        builder = new StringBuilder("SELECT ")
+                .append(columnBuilder())
+                .append(" FROM ")
+                .append(table);
+        
+        if(limit != null || offset != null)
+            setLimit(limit, offset);
+        
+        retrieveDataToArray();
+        
+        return dataArr;
     }
     
     /**
@@ -180,10 +256,46 @@ public class SQLQuery {
             rSet = state.executeQuery(builder.toString());
             
             while(rSet.next()) {
+                data = new HashMap<>();
+                
                 for(String column : columns) {
                     data.put(column, rSet.getObject(column));
                 }
+                
                 datas.add(data);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                rSet.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void retrieveDataToArray() {
+        try {
+            rSet = state.executeQuery(builder.toString());
+            
+            rSet.last();
+            dataArr = new Object[rSet.getRow()][2];
+            
+            rSet.beforeFirst();
+            int i = 0;
+            while(rSet.next()) {
+                
+                Object[] temp = new Object[columns.size()];
+                
+                int j = 0;
+                for(String column : columns) {
+                    temp[j] = rSet.getObject(column);
+                    j++;
+                }
+                
+                dataArr[i] = temp;
+                i++;
             }
         } catch (SQLException ex) {
             Logger.getLogger(SQLQuery.class.getName()).log(Level.SEVERE, null, ex);

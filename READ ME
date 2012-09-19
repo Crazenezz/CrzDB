@@ -11,6 +11,13 @@ Version 0.1 (August 14, 2012):
 - Update data.
 - Delete data.
 
+Version 0.2 (August 15, 2012):
+==============================
+- Add limit offset for query.
+- New Configuration of MySQLConfig (In Progress).
+- New Configuration of PostgreSQLConfig (In Progress).
+- New Configuration of OracleConfig (In Progress).
+
 How To Use:
 ===========
 Please see test/ConnectionTest.java for CRUD example.
